@@ -16,67 +16,75 @@ function createSidebar() {
   sidebar.style.padding = "10px";
   sidebar.style.zIndex = "99999"; // Ensure visibility
 
-  // Header with title and toggle button
   const header = document.createElement("div");
   header.style.display = "flex";
   header.style.justifyContent = "space-between";
   header.style.alignItems = "center";
 
-
-
+  const title = document.createElement("h2");
+  title.innerText = "Extracted Text";
+  header.appendChild(title);
 
   const toggleButton = document.createElement("button");
   toggleButton.innerText = "−";
-  toggleButton.style.marginLeft = "auto";
-  toggleButton.style.padding = "5px 10px";
-  toggleButton.style.cursor = "pointer";
-
-  // Function to minimize/maximize sidebar
   toggleButton.onclick = function () {
-    const minimized = sidebar.dataset.minimized === "true";
-    if (minimized) {
-      sidebar.style.width = "300px";
-      sidebar.style.height = "100%";
-      textBox.style.display = "block";
-      copyButton.style.display = "block";
-      toggleButton.innerText = "−";
-      sidebar.dataset.minimized = "false";
-    } else {
+    if (sidebar.style.width === "300px") {
       sidebar.style.width = "40px";
-      sidebar.style.height = "40px";
       textBox.style.display = "none";
       copyButton.style.display = "none";
+      searchButton.style.display = "none";
       toggleButton.innerText = "+";
-      sidebar.dataset.minimized = "true";
+    } else {
+      sidebar.style.width = "300px";
+      textBox.style.display = "block";
+      copyButton.style.display = "block";
+      searchButton.style.display = "block";
+      toggleButton.innerText = "−";
     }
   };
-
   header.appendChild(toggleButton);
   sidebar.appendChild(header);
 
-  // Text area for extracted text
   const textBox = document.createElement("textarea");
   textBox.id = "text-output";
   textBox.style.width = "100%";
-  textBox.style.height = "80%";
-  textBox.style.display = "block";
+  textBox.style.height = "70%";
   sidebar.appendChild(textBox);
 
-  // Copy button
+  const buttonContainer = document.createElement("div");
+  buttonContainer.style.display = "flex";
+  buttonContainer.style.gap = "5px";
+  buttonContainer.style.marginTop = "5px";
+
   const copyButton = document.createElement("button");
   copyButton.innerText = "Copy Text";
-  copyButton.style.width = "100%";
-  copyButton.style.marginTop = "5px";
+  copyButton.style.flex = "1";
   copyButton.onclick = function () {
     navigator.clipboard.writeText(textBox.value).then(() => {
-      console.log("Text copied to clipboard!");
+      alert("Text copied to clipboard!");
     });
   };
-  sidebar.appendChild(copyButton);
+
+  const searchButton = document.createElement("button");
+  searchButton.innerText = "Search on Google";
+  searchButton.style.flex = "1";
+  searchButton.onclick = function () {
+    const query = encodeURIComponent(textBox.value);
+    if (query.trim()) {
+      window.open(`https://www.google.com/search?q=${query}`, "_blank");
+    } else {
+      console.log("No text available to search.");
+    }
+  };
+
+  buttonContainer.appendChild(copyButton);
+  buttonContainer.appendChild(searchButton);
+  sidebar.appendChild(buttonContainer);
 
   document.body.appendChild(sidebar);
   updateTextOutput();
 }
+
 
 // Ensure sidebar is injected on page load
 if (document.readyState === "loading") {
@@ -96,7 +104,8 @@ async function extractText() {
   textContent = textContent.replace(/(Game PIN:\s*\d+\s*)+/gi, ''); // Remove repeated Game PIN entries
   textContent = textContent.replace(/(Next|Skip|Show media|Jump to main content)/gi, ''); // Remove unnecessary UI text
   textContent = textContent.replace(/(\bSpace\b[\s\n]*)+/gi, ''); // Remove repeated 'Space' text
-  textContent = textContent.replace('- Waiting for players - Kahoot!', 'generate answer for below question'); 
+  textContent = textContent.replace('- Waiting for players - Kahoot!', '');
+  // textContent = textContent.replace('kahoot.it', 'generate answer this');  
 
   chrome.storage.local.set({ capturedText: textContent });
 }

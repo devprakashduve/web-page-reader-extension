@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Kahoot Text Extractor",
+  "version": "1.2",
+  "description": "Extracts text from Kahoot! game pages and displays in popup.",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": ["https://play.kahoot.it/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_open": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://play.kahoot.it/*"],
+      "js": ["content.js"]
+    }
+  ]
+}

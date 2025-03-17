@@ -61,7 +61,7 @@ function createSidebar() {
   copyButton.style.flex = "1";
   copyButton.onclick = function () {
     navigator.clipboard.writeText(textBox.value).then(() => {
-      alert("Text copied to clipboard!");
+      console.log("Text copied to clipboard!");
     });
   };
 

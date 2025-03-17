@@ -14,7 +14,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://play.kahoot.it/*"],
+      "matches": ["https://play.kahoot.it/*","https://chatgpt.com/*"],
       "js": ["content.js"]
     }
   ]
